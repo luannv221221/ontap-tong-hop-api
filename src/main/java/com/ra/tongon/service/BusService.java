@@ -9,5 +9,5 @@ public interface BusService {
     List<BusResponseDTO> findAll();
     BusResponseDTO save(BusRequestDTO busRequestDTO);
     void delete(int busId);
-
+    BusResponseDTO update(BusRequestDTO busRequestDTO, int busId);
 }

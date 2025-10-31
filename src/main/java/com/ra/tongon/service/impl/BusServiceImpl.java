@@ -51,8 +51,11 @@ public class BusServiceImpl implements BusService {
         if (busRepository.existsBusByRegistrationNumber(busRequestDTO.getRegistrationNumber())) {
             throw new HttpConflict(busRequestDTO.getRegistrationNumber() + "already exists");
         }
-
-        String busImage = uploadService.uploadFile(busRequestDTO.getImageBus());
+        // xu ly cap nhat anh
+        String busImage = "";
+        if(busRequestDTO.getImageBus() != null && !busRequestDTO.getImageBus().isEmpty()) {
+            busImage = uploadService.uploadFile(busRequestDTO.getImageBus());
+        }
 
         Bus bus = Bus.builder()
                 .busName(busRequestDTO.getBusName())
@@ -83,5 +86,47 @@ public class BusServiceImpl implements BusService {
         }
         bus.setStatus(false);
         busRepository.save(bus);
+    }
+
+    @Override
+    public BusResponseDTO update(BusRequestDTO busRequestDTO, int busId) {
+        // check xem BusId truyen len co trong CSDL hay khong
+        Bus bus = busRepository.findById(busId).orElseThrow(()-> new HttpNotFound("Bus not found"));
+
+        if(!busRepository.existsBusByBusId(busId)) {
+            throw new HttpNotFound("Bus not found");
+        }
+        // kiem tra ten bus da co hay chua loai tru no
+        if (busRepository.existsByBusNameAndBusIdNot(busRequestDTO.getBusName(),busId)) {
+            throw new HttpConflict(busRequestDTO.getBusName() + "already exists");
+        }
+
+        if (busRepository.existsByRegistrationNumberAndBusIdNot(busRequestDTO.getRegistrationNumber(),busId)) {
+            throw new HttpConflict(busRequestDTO.getRegistrationNumber() + "already exists");
+        }
+
+        // xu ly cap nhat anh
+        String busImage = bus.getImageBus();
+        if(busRequestDTO.getImageBus() != null && !busRequestDTO.getImageBus().isEmpty()) {
+             busImage = uploadService.uploadFile(busRequestDTO.getImageBus());
+        }
+        Bus busUpdate = Bus.builder()
+                .busId(busId)
+                .busName(busRequestDTO.getBusName())
+                .imageBus(busImage)
+                .registrationNumber(busRequestDTO.getRegistrationNumber())
+                .totalSeats(busRequestDTO.getTotalSeats())
+                .status(busRequestDTO.isStatus())
+                .build();
+        Bus busNew = busRepository.save(busUpdate);
+
+        return BusResponseDTO.builder()
+                .busId(busNew.getBusId())
+                .busName(busNew.getBusName())
+                .imageBus(busNew.getImageBus())
+                .totalSeats(busNew.getTotalSeats())
+                .registrationNumber(busNew.getRegistrationNumber())
+                .status(busNew.getStatus()?"Hoat Dong":"Khong Hoat Dong")
+                .build();
     }
 }

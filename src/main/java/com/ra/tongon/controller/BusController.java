@@ -46,4 +46,19 @@ public class BusController {
         busService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(
+            @Valid @ModelAttribute BusRequestDTO busRequestDTO
+            ,@PathVariable int id){
+        BusResponseDTO busResponseDTO = busService.update(busRequestDTO,id);
+        return new ResponseEntity<>(
+                ResponseWrapper.builder()
+                        .success(true)
+                        .message("update bus success")
+                        .data(busResponseDTO)
+                        .httpStatus(HttpStatus.OK.value())
+                        .build(),
+                HttpStatus.OK
+        );
+    }
 }

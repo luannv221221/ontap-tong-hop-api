@@ -1,5 +1,6 @@
 package com.ra.tongon.model.entity;
 
+import com.ra.tongon.validate.Unique;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bus_id")
-    private int busId;
+    private Integer busId;
     @Column(name = "bus_name",length = 100,nullable = false,unique = true)
     private String busName;
     @Column(name = "registration_number",length = 30,nullable = false,unique = true)

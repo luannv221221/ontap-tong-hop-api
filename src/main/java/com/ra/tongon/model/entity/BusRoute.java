@@ -1,9 +1,15 @@
 package com.ra.tongon.model.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "bus_route")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class BusRoute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
